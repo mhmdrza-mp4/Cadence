@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes, useNavigate } from 'react-router-dom'
+import { NavLink, Route, Routes } from 'react-router-dom'
 import {
   BarChart3, Factory, GitCompareArrows, Layers,
   Package, SlidersHorizontal,
@@ -23,7 +23,6 @@ const NAV = [
 
 function Shell() {
   const { running, error, dismiss } = useStore()
-  const navigate = useNavigate()
   return (
     <div className="app">
       <aside className="sidebar">
@@ -43,11 +42,6 @@ function Shell() {
             </NavLink>
           ))}
         </nav>
-        <div className="sidebar-foot">
-          <button className="btn btn-primary" onClick={() => navigate('/simulate')}>
-            {running ? 'Running…' : 'New run'}
-          </button>
-        </div>
       </aside>
 
       <main className="main">
