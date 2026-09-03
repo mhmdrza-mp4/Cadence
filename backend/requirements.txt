@@ -1,0 +1,6 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+simpy==4.1.1
+pydantic==2.10.5
+pytest==8.3.4
+httpx==0.28.1
