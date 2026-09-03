@@ -124,3 +124,21 @@ export async function runCompare(config: Config, bottleneck: string): Promise<Co
 export function clk(t: number) {
   return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`
 }
+
+/** Float hours → clock format "H:MM" (e.g. 5.5 → "5:30", 8 → "8:00"). */
+export function fmtHour(h: number) {
+  const t = Math.round(h * 60)
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`
+}
+
+/** Float minutes → clock format "M:SS" (e.g. 18.5 → "18:30", 41.9 → "41:54"). */
+export function fmtMin(m: number) {
+  const s = Math.round(m * 60)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
+
+/** Float minutes → clock format "H:MM:SS" (e.g. 85.5 → "1:25:30"). */
+export function fmtHMS(m: number) {
+  const s = Math.round(m * 60)
+  return `${Math.floor(s / 3600)}:${String(Math.floor(s / 60) % 60).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}

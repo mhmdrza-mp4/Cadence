@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 import { Link } from 'react-router-dom'
 import { useStore } from '../store'
 import { AXIS, ChartCard, ChartTip, HGrid } from '../chart'
-import { SERIES } from '../api'
+import { SERIES, fmtHour, fmtMin } from '../api'
 
 function Stat({
   label, value, unit, sub, color,
@@ -74,9 +74,9 @@ export default function Overview() {
         />
         <Stat
           label="Avg cycle time"
-          value={s.average_cycle_time_minutes}
+          value={fmtMin(s.average_cycle_time_minutes)}
           unit="min"
-          sub={`p90 ${s.p90_cycle_time_minutes} min`}
+          sub={`p90 ${fmtMin(s.p90_cycle_time_minutes)}`}
           color={SERIES[1]}
         />
         <Stat
@@ -88,8 +88,8 @@ export default function Overview() {
         />
         <Stat
           label="Downtime"
-          value={s.total_downtime_minutes}
-          unit="min"
+          value={fmtHour(s.total_downtime_minutes / 60)}
+          unit="h"
           sub={`${s.total_breakdowns} breakdowns`}
           color={SERIES[3]}
         />
@@ -127,7 +127,7 @@ export default function Overview() {
                 </linearGradient>
               </defs>
               <HGrid />
-              <XAxis dataKey="time" {...AXIS} tickFormatter={(v) => `${v}h`} />
+              <XAxis dataKey="time" {...AXIS} tickFormatter={fmtHour} />
               <YAxis width={38} {...AXIS} allowDecimals={false} />
               <Tooltip content={<ChartTip />} />
               <Area

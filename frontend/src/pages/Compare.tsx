@@ -5,20 +5,35 @@ import {
 } from 'recharts'
 import { useStore } from '../store'
 import { AXIS, ChartCard, ChartTip, HGrid, Lg } from '../chart'
-import { SERIES } from '../api'
+import { SERIES, fmtHour } from '../api'
 
 export default function Compare() {
-  const { compare, running, runCompare } = useStore()
+  const { compare, result, running, runCompare } = useStore()
+
+  if (!result) {
+    return (
+      <>
+        <div className="page-head">
+          <h1>Compare</h1>
+          <p>Test extra capacity against your baseline.</p>
+        </div>
+        <div className="empty">
+          <div className="empty-icon" style={{ background: 'linear-gradient(135deg, var(--orange), var(--yellow))' }}>
+            <GitCompareArrows size={24} />
+          </div>
+          <h2>Nothing to compare yet</h2>
+          <p>Run a simulation first — this page shows what adding capacity at the bottleneck would do.</p>
+        </div>
+      </>
+    )
+  }
 
   if (!compare) {
     return (
       <>
         <div className="page-head">
           <h1>Compare</h1>
-          <p>
-            Run the current configuration against a variant with one extra machine
-            at the detected bottleneck.
-          </p>
+          <p>Test extra capacity against your baseline.</p>
         </div>
         <div className="empty">
           <div className="empty-icon" style={{ background: 'linear-gradient(135deg, var(--orange), var(--yellow))' }}>
@@ -141,7 +156,7 @@ export default function Compare() {
               margin={{ top: 5, right: 8, left: -18, bottom: 0 }}
             >
               <HGrid />
-              <XAxis dataKey="time" {...AXIS} tickFormatter={(v) => `${v}h`} />
+              <XAxis dataKey="time" {...AXIS} tickFormatter={fmtHour} />
               <YAxis width={38} {...AXIS} allowDecimals={false} />
               <Tooltip content={<ChartTip />} />
               <Line type="monotone" dataKey="A" name="Scenario A" stroke={SERIES[0]} strokeWidth={2} dot={false} />

@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { BarChart3, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useStore } from '../store'
 import { AXIS, ChartCard, ChartTip, HGrid, Lg } from '../chart'
-import { SERIES, SHORT, STATIONS } from '../api'
+import { SERIES, SHORT, STATIONS, clk, fmtHour } from '../api'
 
 const GRAY = '#d6d0c6' // de-emphasis hue for non-focus stations
 
@@ -19,6 +19,9 @@ export default function Flow() {
           <p>How work moves through the line over time.</p>
         </div>
         <div className="empty">
+          <div className="empty-icon" style={{ background: 'linear-gradient(135deg, var(--orange), var(--yellow))' }}>
+            <BarChart3 size={24} />
+          </div>
           <h2>No simulation yet</h2>
           <p>Run a simulation first — this page shows queue pressure and breakdown timing.</p>
         </div>
@@ -50,7 +53,7 @@ export default function Flow() {
             }}
           >
             <HGrid />
-            <XAxis dataKey="time" {...AXIS} tickFormatter={(v) => `${v}h`} />
+            <XAxis dataKey="time" {...AXIS} tickFormatter={fmtHour} />
             <YAxis width={38} {...AXIS} allowDecimals={false} />
             <Tooltip content={<ChartTip />} />
             {STATIONS.map((name) => {
@@ -78,15 +81,22 @@ export default function Flow() {
         </div>
       </ChartCard>
 
-      <div className="grid grid-2" style={{ marginTop: 16 }}>
-        <ChartCard
-          title="Breakdown timeline"
-          sub={`${s.total_breakdowns} failures across the run`}
-        >
+      <ChartCard
+        title="Line replay"
+        sub="drag the timeline to inspect the line — frames every 5 simulated minutes"
+      >
+        <Replay />
+      </ChartCard>
+
+      <ChartCard
+        title="Breakdown timeline"
+        sub={`${s.total_breakdowns} failures across the run`}
+      >
+        <div className="bd-grid">
           {result.stations.map((st) => {
             const marks = result.breakdown_markers.filter((m) => m.station === st.name)
             return (
-              <div className="meter-row" key={st.name} style={{ gridTemplateColumns: '130px 1fr 60px' }}>
+              <div className="meter-row bd-row" key={st.name}>
                 <div className="meter-name">
                   {st.name}
                   <span>{st.total_downtime_minutes} min down</span>
@@ -103,7 +113,7 @@ export default function Flow() {
                   {marks.map((m, i) => (
                     <i
                       key={i}
-                      title={`${m.machine} at ${m.time}h`}
+                      title={`${m.machine} at ${fmtHour(m.time)}`}
                       style={{
                         position: 'absolute',
                         top: 0,
@@ -122,15 +132,8 @@ export default function Flow() {
               </div>
             )
           })}
-        </ChartCard>
-
-        <ChartCard
-          title="Line replay"
-          sub="drag the timeline to inspect the line — frames every 5 simulated minutes"
-        >
-          <Replay />
-        </ChartCard>
-      </div>
+        </div>
+      </ChartCard>
     </>
   )
 }
@@ -155,7 +158,7 @@ function Replay() {
   const totals = frames.map((f) => STATIONS.reduce((a, st) => a + queueOf(f, st), 0))
   const maxQueue = Math.max(1, ...totals)
   const maxStationQueue = Math.max(1, ...frames.flatMap((f) => STATIONS.map((st) => queueOf(f, st))))
-  const timeOf = (f: any) => `${Math.floor(f.t / 60)}:${String(Math.floor(f.t % 60)).padStart(2, '0')}`
+  const timeOf = (f: any) => clk(f.t)
 
   // events inside (prev.t, frame.t] — what happened in the step that just ended
   const evs = events.filter((e) => (prev ? e.time > prev.t && e.time <= frame.t : e.time <= frame.t))

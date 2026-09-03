@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { CartesianGrid } from 'recharts'
+import { fmtHour } from './api'
 
 /** Shared tooltip for all recharts charts — values lead, labels follow. */
 export function ChartTip(props: any) {
@@ -7,12 +8,14 @@ export function ChartTip(props: any) {
   if (!active || !payload?.length) return null
   return (
     <div className="tip">
-      <div className="tip-label">
-        {typeof label === 'number' ? `${label}h` : label}
-      </div>
+      {label != null && (
+        <div className="tip-label">
+          {typeof label === 'number' ? fmtHour(label) : label}
+        </div>
+      )}
       {payload.map((p: any) => (
-        <div className="tip-row" key={p.dataKey}>
-          <i style={{ background: p.stroke || p.fill }} />
+        <div className="tip-row" key={p.dataKey ?? p.name}>
+          <i style={{ background: p.stroke || p.fill || p.payload?.fill }} />
           <span>{p.name ?? p.dataKey}</span>
           <b>
             {typeof p.value === 'number'
@@ -37,15 +40,16 @@ export function HGrid() {
 }
 
 export function ChartCard({
-  title, sub, children, legend,
+  title, sub, children, legend, className,
 }: {
   title: string
   sub?: string
   children: ReactNode
   legend?: ReactNode
+  className?: string
 }) {
   return (
-    <div className="card">
+    <div className={`card${className ? ` ${className}` : ''}`}>
       <div className="card-head">
         <h3>{title}</h3>
         {sub && <div className="card-sub">{sub}</div>}

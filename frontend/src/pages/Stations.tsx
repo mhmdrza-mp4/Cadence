@@ -1,6 +1,6 @@
-import { TriangleAlert } from 'lucide-react'
+import { TriangleAlert, Layers } from 'lucide-react'
 import { useStore } from '../store'
-import { SHORT } from '../api'
+import { SHORT, fmtHMS } from '../api'
 
 export default function Stations() {
   const { result } = useStore()
@@ -13,6 +13,9 @@ export default function Stations() {
           <p>Utilization, queues and per-machine detail for the four stations.</p>
         </div>
         <div className="empty">
+          <div className="empty-icon" style={{ background: 'linear-gradient(135deg, var(--blue), var(--aqua))' }}>
+            <Layers size={24} />
+          </div>
           <h2>No simulation yet</h2>
           <p>Run a simulation first — this page breaks the results down by station and machine.</p>
         </div>
@@ -86,7 +89,7 @@ export default function Stations() {
               </h3>
               <div className="card-sub">
                 {st.machines.length} machines · avg queue {st.average_queue} · max{' '}
-                {st.max_queue} · {st.total_downtime_minutes} min down
+                {st.max_queue} · {fmtHMS(st.total_downtime_minutes)} down
               </div>
             </div>
             <div style={{ color: 'var(--ink-2)', fontSize: 13 }}>
@@ -112,8 +115,8 @@ export default function Stations() {
                 <tr key={m.id}>
                   <td className="strong">{m.id}</td>
                   <td className="num">{m.utilization}%</td>
-                  <td className="num">{m.busy_minutes} min</td>
-                  <td className="num">{m.downtime_minutes} min</td>
+                  <td className="num">{fmtHMS(m.busy_minutes)}</td>
+                  <td className="num">{fmtHMS(m.downtime_minutes)}</td>
                   <td className="num">{m.breakdowns}</td>
                 </tr>
               ))}
