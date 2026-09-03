@@ -1,0 +1,34 @@
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Git ──
+*.orig
+*.rej
+
+# ── Python / Backend ──
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ── Node / Frontend ──
+node_modules/
+dist/
+dist-ssr/
+*.local
+frontend/.env
+frontend/.env.local
+
+# ── Build / IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
