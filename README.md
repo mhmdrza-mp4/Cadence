@@ -58,5 +58,5 @@ Then open `http://localhost:5173`. The frontend expects the API at `http://local
 ---
 
 <div align="center">
-<sub>Released under the MIT License · see <code>LICENSE</code> for details</sub>
+<sub>Released under the <a href="./LICENSE"> MIT License </a> · see <code>LICENSE</code> for details</sub>
 </div>
