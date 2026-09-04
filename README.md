@@ -1,58 +1,78 @@
+<div align="center">
+
 # Cadence
 
-Cadence is a full-stack discrete-event simulation dashboard for a four-stage
-factory line. The backend uses SimPy and FastAPI; the frontend is a light,
-colorful React app split across focused pages — Overview, Simulate, Stations,
-Flow, Products, and Compare.
+**A discrete-event simulation of a four-station factory line, engineered to expose the true constraint before it costs you real throughput.**
 
-## Run locally
+</div>
 
-### Backend
+<p align="center">
+  <img src="docs/screenshots/overview.png" alt="Overview page, KPIs and bottleneck callout" width="803.5"/><br/>
+  <img src="docs/screenshots/flow.png" alt="Flow page, live line and replay" width="400"/>
+  <img src="docs/screenshots/compare.png" alt="Compare page, scenario comparison" width="400"/>
+</p>
 
-```powershell
+<p align="center">⸻</p>
+
+Cadence models a production line composed of four sequential stations, Cutting, Assembly, Quality Inspection, and Packaging, each operating its own bank of parallel machines. Orders arrive stochastically, are routed through the line according to product type, accumulate in queue whenever a station reaches capacity, and periodically encounter equipment failure before continuing downstream. The dashboard renders that process legible: where work-in-process is accumulating, which station is the binding constraint on system throughput, and how the line responds when a proposed change is applied.
+
+<br>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### What the simulation models
+
+- **Four stations in series**: an independently configurable count of parallel machines per station, so capacity can be allocated station by station rather than uniformly
+- **Product-specific routing**: certain products bypass Quality Inspection entirely, others are looped back through Assembly for rework, each carrying its own processing-time distribution
+- **Stochastic arrivals**: modeled as a random process rather than a fixed schedule, consistent with how demand actually presents itself
+- **Priority dispatching**: rush orders preempt the standard queue, with the resulting delay imposed on other orders made explicit in the output
+- **Reliability modeling**: machine breakdowns and repairs governed by mean time between failures and mean time to repair
+
+</td>
+<td width="50%" valign="top">
+
+### What the dashboard shows you
+
+- **Configuring a run**: arrival rate, simulation horizon, share of rush orders, machine reliability parameters, and machine count per station
+- **Observing the line in motion**: queues forming, machines cycling between idle, busy, and failed states, and which station currently constrains the system
+- **Reviewing the metrics that matter**: throughput, cycle time, utilization, and downtime, disaggregated by station and by product
+- **Evaluating a decision before committing to it**: a baseline and a proposed alternative run side by side, with the resulting difference reported directly rather than estimated
+
+</td>
+</tr>
+</table>
+
+<br>
+
+### Running it locally
+
+**Backend**
+
+```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1        # Windows
+# source .venv/bin/activate        # macOS/Linux
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-API endpoints:
+**Frontend** (in a second terminal)
 
-- `GET /health`
-- `POST /api/simulate`
-- `POST /api/compare`
-
-### Frontend
-
-In a second terminal:
-
-```powershell
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. The frontend expects the API at `http://localhost:8000`.
+Then open `http://localhost:5173`.
 
-## Pages
+<br>
 
-- **Overview** — KPIs (throughput, cycle time, utilization, downtime), the
-  bottleneck callout, and throughput by hour
-- **Simulate** — arrivals, horizon, rush orders, reliability, machines per
-  station, seed
-- **Stations** — utilization meters and per-machine tables
-- **Flow** — queue length over time, breakdown timeline, line replay scrubber
-- **Products** — cycle-time distribution, output by product, route map
-- **Compare** — baseline vs. +1-machine-at-bottleneck, with a throughput overlay
+---
 
-## What is modeled
-
-- Cutting, Assembly, Quality Inspection, and Packaging
-- Parallel machines per station
-- Product-specific routes, including skipped inspection and assembly rework loops
-- Exponential arrivals and processing-time variation
-- Priority queues for rush orders
-- Machine MTBF/MTTR breakdowns and repairs
-- Queue, utilization, downtime, throughput, event-log, and replay data
-- Baseline vs. add-capacity scenario comparison
+<div align="center">
+<sub>Released under the MIT License · see <code>LICENSE</code> for details</sub>
+</div>
