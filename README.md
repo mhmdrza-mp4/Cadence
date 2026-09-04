@@ -1,8 +1,18 @@
-<div align="center">
+ؤ<div align="center">
 
 # Cadence
 
-**A discrete-event simulation of a four-station factory line, engineered to expose the true constraint before it costs you real throughput.**
+**A discrete-event simulation of a four-station production line, designed to identify the system constraint and measure how capacity changes affect overall throughput.**
+
+<p>
+  <img src="https://img.shields.io/badge/backend-FastAPI-009688" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/simulation-SimPy-blue" alt="SimPy"/>
+  <img src="https://img.shields.io/badge/frontend-React-61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"/>
+</p>
+
+<!-- If you have a deployed instance, put the link here — this is the single highest-value line in the whole file, since most reviewers won't run the app locally -->
+<!-- **[Live demo →](https://your-deployed-url.example.com)** -->
 
 </div>
 
@@ -12,43 +22,17 @@
   <img src="docs/screenshots/compare.png" alt="Compare page, scenario comparison" width="400"/>
 </p>
 
-<p align="center">⸻</p>
-
-Cadence models a production line composed of four sequential stations, Cutting, Assembly, Quality Inspection, and Packaging, each operating its own bank of parallel machines. Orders arrive stochastically, are routed through the line according to product type, accumulate in queue whenever a station reaches capacity, and periodically encounter equipment failure before continuing downstream. The dashboard renders that process legible: where work-in-process is accumulating, which station is the binding constraint on system throughput, and how the line responds when a proposed change is applied.
+Cadence models a production line consisting of four sequential stations, Cutting, Assembly, Quality Inspection, and Packaging, each operating a set of parallel machines. Orders arrive stochastically, are routed through the line based on product type, and accumulate in queues whenever a station reaches capacity. Machines may also experience periodic failures before orders continue downstream. The dashboard makes this behavior visible by showing where work-in-process accumulates, which station constrains overall throughput, and how the line responds to a proposed capacity change.
 
 <br>
 
-<table>
-<tr>
-<td width="50%" valign="top">
+### Rationale
 
-### What the simulation models
-
-- **Four stations in series**: an independently configurable count of parallel machines per station, so capacity can be allocated station by station rather than uniformly
-- **Product-specific routing**: certain products bypass Quality Inspection entirely, others are looped back through Assembly for rework, each carrying its own processing-time distribution
-- **Stochastic arrivals**: modeled as a random process rather than a fixed schedule, consistent with how demand actually presents itself
-- **Priority dispatching**: rush orders preempt the standard queue, with the resulting delay imposed on other orders made explicit in the output
-- **Reliability modeling**: machine breakdowns and repairs governed by mean time between failures and mean time to repair
-
-</td>
-<td width="50%" valign="top">
-
-### What the dashboard shows you
-
-- **Configuring a run**: arrival rate, simulation horizon, share of rush orders, machine reliability parameters, and machine count per station
-- **Observing the line in motion**: queues forming, machines cycling between idle, busy, and failed states, and which station currently constrains the system
-- **Reviewing the metrics that matter**: throughput, cycle time, utilization, and downtime, disaggregated by station and by product
-- **Evaluating a decision before committing to it**: a baseline and a proposed alternative run side by side, with the resulting difference reported directly rather than estimated
-
-</td>
-</tr>
-</table>
-
-<br>
+Testing capacity changes on a live production line can be costly and disruptive, as stopping production for a trial results in lost throughput. This project models the line as a queueing system, allowing proposed changes such as adding or reallocating machines to be evaluated in seconds and measured by their actual impact on throughput. The model also identifies the station that currently constrains overall line capacity, since adding capacity elsewhere may have little or no effect on throughput. The scope is intentionally focused on identifying the constraint and quantifying the impact of resolving it.
 
 ### Running it locally
 
-**Backend**
+Download the latest release as a ZIP from the [Releases](../../releases) page and extract it, and run the following commands from the project root.
 
 ```bash
 cd backend
@@ -58,7 +42,7 @@ python -m venv .venv
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
-
+  
 **Frontend** (in a second terminal)
 
 ```bash
@@ -67,7 +51,7 @@ npm install
 npm run dev
 ```
 
-Then open `http://localhost:5173`.
+Then open `http://localhost:5173`. The frontend expects the API at `http://localhost:8000`.
 
 <br>
 
